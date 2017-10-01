@@ -1,0 +1,13 @@
+{
+    "savedMacros": [
+        {
+            "name": "Search for Poop",
+            "operations": [
+                {
+                    "name": "search",
+                    "value": "Poop"
+                }
+            ]
+        }
+    ]
+}

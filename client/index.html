@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="preload" href="assets/bundle.js" as="script">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>
+        <%= htmlWebpackPlugin.options.title %>
+    </title>
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.8.0/css/tachyons.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/tachyons-spacing@6.0.4/css/tachyons-spacing.min.css" />
+    <style>
+        html,
+        body,
+        main {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #662D91
+        }
+    </style>
+</head>
+
+<body>
+    <main class="fl w-100 pa2 sans-serif">
+        <!-- App injection point -->
+    </main>
+    <script type="text/javascript" src="assets/bundle.js"></script>
+</body>
+
+</html>

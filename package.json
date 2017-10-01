@@ -1,0 +1,31 @@
+{
+  "name": "roku-macros",
+  "version": "0.1.0",
+  "description": "Setup macros that can be triggered by any device with a browser on a LAN",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node .",
+    "watch": "webpack --watch",
+    "build": "NODE_ENV=production webpack -p",
+    "clean": "rm -rf client/dist"
+  },
+  "keywords": [
+    "roku"
+  ],
+  "author": "Andrew Levine",
+  "license": "MIT",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-react": "^6.24.1",
+    "got": "^7.1.0",
+    "hapi": "^16.6.2",
+    "html-webpack-plugin": "^2.30.1",
+    "inert": "^4.2.1",
+    "node-ssdp": "^3.2.4",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "webpack": "^3.6.0",
+    "xml2js": "^0.4.19"
+  }
+}
