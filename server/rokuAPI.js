@@ -9,7 +9,7 @@ const rokuAPI = {
         return (await pify(xml2js.parseString)(body))['device-info'];
     },
 
-    async keypress(location, key) {
+    async search(location, key) {
         const deviceInfo = await rokuAPI.deviceInfo(location);
         await got.post(new URL(`search/browse?keyword=${term}`, location));
         // Roku doesn't provide a body back for `search`

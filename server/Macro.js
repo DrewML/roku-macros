@@ -1,28 +1,11 @@
-class Macro {
-    constructor(name) {
-        this.name = name;
-        this.operations = [];
-    }
+const rokuAPI = require('./rokuAPI');
 
-    search(term) {
-        this.operations.push(operation('search', term));
-        return this;
-    }
-
-    keypress(key) {
-        this.operations.push(operation('keypress', key));
-        return this;
-    }
-}
-
-Macro.fromConfig = ({ name, operations }) => {
-    const macro = new Macro(name);
-    macro.operations = operations;
-    return macro;
+const opDefs = {
+    search: (loc, op) => rokuAPI.search(loc, op.value)
 };
 
-function operation(name, value) {
-    return { name, value };
-}
-
-module.exports = Macro;
+module.exports = async function runMacro(location, operations) {
+    for (const op of operations) {
+        await opDefs[op.type](location, op);
+    }
+};

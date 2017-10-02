@@ -12,7 +12,7 @@ class MacroDB {
             this.db = require(dbPath);
         } catch (err) {
             this.db = {
-                savedMacros: []
+                savedMacros: {}
             };
         }
     }
@@ -24,8 +24,16 @@ class MacroDB {
         );
     }
 
-    update(db) {
-        this.db = db;
+    exists(name) {
+        return !!this.db.savedMacros[name];
+    }
+
+    delete(name) {
+        this.db.savedMacros[name] = null;
+    }
+
+    add(name, macro) {
+        this.db.savedMacros[name] = macro;
         return this.save();
     }
 }

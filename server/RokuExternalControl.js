@@ -27,9 +27,7 @@ class RokuExternalControl extends EventEmitter {
 
         if (!this.started) {
             client.on('response', async msg => {
-                this.emit(RokuExternalControl.DISCOVERED, {
-                    location: msg.LOCATION
-                });
+                this.emit(RokuExternalControl.DISCOVERED, msg.LOCATION);
             });
             this.started = true;
             this.client.start(onReady);

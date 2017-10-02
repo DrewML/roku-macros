@@ -1,13 +1,20 @@
 {
-    "savedMacros": [
-        {
-            "name": "Search for Poop",
+    "savedMacros": {
+        "Search For Poop": {
             "operations": [
                 {
-                    "name": "search",
+                    "type": "search",
                     "value": "Poop"
                 }
             ]
+        },
+        "My new macro": {
+            "operations": [
+                {
+                    "type": "search",
+                    "value": "Halt and Catch Fire"
+                }
+            ]
         }
-    ]
+    }
 }

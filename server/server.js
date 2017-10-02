@@ -1,9 +1,13 @@
+const joi = require('joi');
 const path = require('path');
-const { Server } = require('hapi');
+const boom = require('boom');
 const inert = require('inert');
-const RokuExternalControl = require('./RokuExternalControl');
+const assert = require('assert');
+const { green } = require('chalk');
+const { Server } = require('hapi');
 const rokuAPI = require('./rokuAPI');
 const MacroDB = require('./MacroDB');
+const RokuExternalControl = require('./RokuExternalControl');
 
 exports.start = async () => {
     const server = new Server({
@@ -16,17 +20,19 @@ exports.start = async () => {
     await server.register(inert);
 
     const macroDB = new MacroDB({
-        dbPath: process.env.DB_PATH || path.join(__dirname, 'macros.json')
+        dbPath: process.env.DB_PATH || path.join(__dirname, '../macros.json')
     });
-    const devices = [];
+    const deviceLocations = [];
     const roku = new RokuExternalControl();
-    roku.on(RokuExternalControl.DISCOVERED, device => devices.push(device));
+    roku.on(RokuExternalControl.DISCOVERED, location =>
+        deviceLocations.push(location)
+    );
 
     server.route({
         method: 'GET',
         path: '/',
         handler: {
-            file: 'client/dist/index.html'
+            file: 'client/index.html'
         }
     });
 
@@ -35,7 +41,7 @@ exports.start = async () => {
         path: '/devices',
         handler: async (req, reply) => {
             const devicesInfo = await Promise.all(
-                devices.map(device => rokuAPI.deviceInfo(device.location))
+                deviceLocations.map(rokuAPI.deviceInfo)
             );
             reply(devicesInfo);
         }
@@ -45,7 +51,7 @@ exports.start = async () => {
         method: 'POST',
         path: '/devices/refresh',
         handler: (req, reply) => {
-            devices.length = 0;
+            deviceLocations.length = 0;
             roku.discover();
             reply();
         }
@@ -61,12 +67,50 @@ exports.start = async () => {
 
     server.route({
         method: 'POST',
+        path: '/macros/run',
+        handler: async (req, reply) => {}
+    });
+
+    server.route({
+        method: 'POST',
         path: '/macros/add',
-        handler: (req, reply) => {
-            throw new Error('Not implemented');
+        handler: async ({ payload }, reply) => {
+            if (macroDB.exists(payload.name)) {
+                return reply(
+                    boom.badRequest(`"${payload.name}" already exists`)
+                );
+            }
+
+            await macroDB.add(payload.name, {
+                operations: payload.operations
+            });
+        },
+        config: {
+            validate: {
+                payload: joi
+                    .object()
+                    .keys({
+                        name: joi.string().required(),
+                        operations: joi
+                            .array()
+                            .min(1)
+                            .items(
+                                joi
+                                    .object()
+                                    .keys({
+                                        type: joi.string().required(),
+                                        value: joi.string().required()
+                                    })
+                                    .required()
+                            )
+                            .required()
+                    })
+                    .required()
+            }
         }
     });
 
+    // Static assets
     server.route({
         method: 'GET',
         path: '/assets/{param*}',
@@ -77,14 +121,15 @@ exports.start = async () => {
         }
     });
 
+    // Catch-all
     server.route({
         method: 'GET',
         path: '/{p*}',
         handler: {
-            file: 'client/dist/index.html'
+            file: 'client/index.html'
         }
     });
 
     await server.start();
-    console.log(`"Roku Macros" server running at ${server.info.uri}`);
+    console.log(`"Roku Macros" server running at ${green(server.info.uri)}`);
 };
