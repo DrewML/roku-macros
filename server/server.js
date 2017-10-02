@@ -7,6 +7,7 @@ const { green } = require('chalk');
 const { Server } = require('hapi');
 const rokuAPI = require('./rokuAPI');
 const MacroDB = require('./MacroDB');
+const runMacro = require('./runMacro');
 const RokuExternalControl = require('./RokuExternalControl');
 
 exports.start = async () => {
@@ -61,14 +62,28 @@ exports.start = async () => {
         method: 'GET',
         path: '/macros',
         handler: (req, reply) => {
-            reply(macroDB.db);
+            reply(macroDB.db.savedMacros);
         }
     });
 
     server.route({
         method: 'POST',
         path: '/macros/run',
-        handler: async (req, reply) => {}
+        handler: async ({ payload }, reply) => {
+            const { operations } = macroDB.get(payload.macroName);
+            await runMacro(payload.location, operations);
+        },
+        config: {
+            validate: {
+                payload: joi
+                    .object()
+                    .keys({
+                        macroName: joi.string().required(),
+                        location: joi.string().required()
+                    })
+                    .required()
+            }
+        }
     });
 
     server.route({

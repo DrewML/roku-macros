@@ -11,7 +11,7 @@ const rokuAPI = {
 
     async search(location, key) {
         const deviceInfo = await rokuAPI.deviceInfo(location);
-        await got.post(new URL(`search/browse?keyword=${term}`, location));
+        await got.post(new URL(`search/browse?keyword=${key}`, location));
         // Roku doesn't provide a body back for `search`
     }
 };

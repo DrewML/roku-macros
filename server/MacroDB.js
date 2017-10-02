@@ -36,6 +36,10 @@ class MacroDB {
         this.db.savedMacros[name] = macro;
         return this.save();
     }
+
+    get(name) {
+        return this.db.savedMacros[name];
+    }
 }
 
 module.exports = MacroDB;
